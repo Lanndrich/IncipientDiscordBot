@@ -13,6 +13,12 @@ const starterEncouragements = [
   "Meow meow meow."
 ];
 
+db.get('responding').then(value => {
+  if (value == null) {
+    db.set('responding', true);
+  }
+});
+
 db.get('encouragements').then(encouragements => {
   if (!encouragements || encouragements.length < 1) {
     db.set('encouragements', starterEncouragements);
@@ -56,13 +62,6 @@ client.on('message', msg => {
     getQuote().then(quote => msg.channel.send(quote));
   }
 
-  if (sadWords.some(word => msg.content.includes(word))) {
-    db.get('encouragements').then(encouragements => {
-      const encouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
-      msg.reply(encouragement);
-    })
-  }
-
   if (msg.content.startsWith('$new ')) {
     let encouragingMessage = msg.content.split('$new ')[1];
     updateEncouragements(encouragingMessage);
@@ -74,6 +73,27 @@ client.on('message', msg => {
     deleteEncouragement(index);
     msg.channel.send('Encouraging message deleted.');
   }
+
+  if (msg.content.startsWith('$responding ')) {
+    value = msg.content.split('$responding ')[1];
+
+    if (value.toLowerCase() == 'true') {
+      db.set('responding', true);
+      msg.channel.send("Sad word responses on.");
+    } else if (value.toLowerCase() == 'false') {
+      db.set('responding', false);
+      msg.channel.send('Sad word responding off.');
+    }
+  }
+
+  db.get('responding').then(responding => {
+    if (responding && sadWords.some(word => msg.content.includes(word))) {
+      db.get('encouragements').then(encos => {
+        const enco = encos[Math.floor(Math.random() * encos.length)];
+        msg.reply(enco);
+      });
+    }
+  });
 });
 
 client.login(process.env.TOKEN);
