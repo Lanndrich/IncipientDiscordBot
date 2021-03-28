@@ -1,6 +1,7 @@
 const Database = require("@replit/database");
 const Discord = require("discord.js");
 const fetch = require("node-fetch");
+const keepAlive = require("./server")
 
 const client = new Discord.Client();
 const db = new Database()
@@ -96,4 +97,5 @@ client.on('message', msg => {
   });
 });
 
+keepAlive();
 client.login(process.env.TOKEN);
