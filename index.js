@@ -26,7 +26,7 @@ client.on('message', msg => {
   // If the message was sent by a user that is a bot, escape.
   if (msg.author.bot) return;
 
-  // If the 
+  // If the user asked for a quote, give that user a quote!  CaveJohnsononespls.
   if (msg.content === '!inspire') {
     getQuote().then(quote => msg.channel.send(quote));
   }
